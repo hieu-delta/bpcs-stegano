@@ -1,5 +1,4 @@
 import json
-import subprocess
 import logging
 import ffmpeg
 from PIL import Image
@@ -63,7 +62,7 @@ def create_video(stego_frame_paths, input_video="test.mp4", output_path="stego_v
         stream = ffmpeg.output(
             stream, output_path, vcodec='libx264', pix_fmt='yuv420p',
             video_bitrate=bitrate, r=fps, s=f'{width}x{height}',
-            preset='veryslow', crf=18  # Giảm nén để giữ chất lượng
+            preset='veryslow', crf=18
         )
         process = ffmpeg.run_async(stream, pipe=True)
         

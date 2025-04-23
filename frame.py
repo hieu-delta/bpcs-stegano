@@ -8,6 +8,31 @@ import logging
 # Thiết lập logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+# Hàm tính số block bit cần thiết từ thông điệp
+def calculate_required_blocks(message, block_size=8):
+    try:
+        binary_length = len(message) * 8  # Mỗi ký tự 8 bit
+        block_bits = block_size * block_size  # 64 bit/block
+        num_blocks = (binary_length + block_bits - 1) // block_bits  # Làm tròn lên
+        logging.info(f"Message '{message}' requires {num_blocks} blocks")
+        return num_blocks
+    except Exception as e:
+        logging.error(f"Failed to calculate required blocks: {str(e)}")
+        raise
+
+# Hàm đọc thông điệp từ plain.txt
+def read_message(file_path="plain.txt"):
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            message = f.read().strip()
+        if not message:
+            raise ValueError("Empty message in plain.txt")
+        logging.info(f"Read message from {file_path}: {message}")
+        return message
+    except Exception as e:
+        logging.error(f"Failed to read message from {file_path}: {str(e)}")
+        raise
+
 # Hàm tính độ phức tạp của một khối 8x8
 def calculate_complexity(block):
     try:
@@ -47,7 +72,7 @@ def find_noise_blocks(bit_plane, block_size=8, threshold=0.3):
 # Hàm chia ảnh thành các mặt phẳng bit (RGB)
 def get_bit_planes(image):
     try:
-        image_array = np.array(image)
+        image_array = np.array(image, dtype=np.uint8)
         height, width, channels = image_array.shape
         bit_planes = np.zeros((channels, 8, height, width), dtype=np.uint8)
         for channel in range(channels):
@@ -102,15 +127,24 @@ def extract_frames(video_path, output_dir="frames"):
         raise
 
 # Hàm chọn khung hình dựa trên số lượng khối nhiễu
-def select_frames(frames, num_frames_needed=1):
+def select_frames(frames, num_blocks_needed):
     try:
-        # Phân tích số lượng khối nhiễu cho mỗi khung hình
         noise_counts = [(i, analyze_frame_noise_blocks(frame)) for i, frame in enumerate(frames)]
-        # Sắp xếp theo số lượng khối nhiễu (giảm dần)
         noise_counts.sort(key=lambda x: x[1], reverse=True)
-        # Chọn số lượng khung hình cần thiết
-        selected_indices = [index for index, _ in noise_counts[:num_frames_needed]]
-        logging.info(f"Selected frames: {selected_indices}")
+        
+        selected_indices = []
+        total_noise_blocks = 0
+        for index, count in noise_counts:
+            selected_indices.append(index)
+            total_noise_blocks += count
+            if total_noise_blocks >= num_blocks_needed:
+                break
+        
+        if total_noise_blocks < num_blocks_needed:
+            logging.error(f"Not enough noise blocks ({total_noise_blocks}) for {num_blocks_needed} blocks")
+            raise ValueError("Insufficient noise blocks across all frames")
+        
+        logging.info(f"Selected frames {selected_indices} with {total_noise_blocks} noise blocks for {num_blocks_needed} blocks")
         return selected_indices
     except Exception as e:
         logging.error(f"Failed to select frames: {str(e)}")
@@ -134,8 +168,9 @@ def save_key_K(frames, selected_frame_indices, output_path="key_K.json"):
 try:
     video_path = "test.mp4"
     frames = extract_frames(video_path)
-    # Chọn 1 khung hình mặc định (có thể tăng nếu tin nhắn dài)
-    selected_frame_indices = select_frames(frames, num_frames_needed=1)
+    message = read_message("plain.txt")
+    num_blocks_needed = calculate_required_blocks(message)
+    selected_frame_indices = select_frames(frames, num_blocks_needed)
     save_key_K(frames, selected_frame_indices)
 except Exception as e:
     logging.error(f"Execution failed: {str(e)}")

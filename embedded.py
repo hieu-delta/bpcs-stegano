@@ -1,11 +1,11 @@
 import numpy as np
 from PIL import Image
 import json
-import os
 import logging
 
-# Thiết lập logging
+# Thiết lập logging (đặt DEBUG để xem chi tiết pixel nếu cần)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Để bật debug: logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Hàm đọc key_K
 def load_key_K(input_path="key_K.json"):
@@ -16,6 +16,19 @@ def load_key_K(input_path="key_K.json"):
         return key_K
     except Exception as e:
         logging.error(f"Failed to load key_K: {str(e)}")
+        raise
+
+# Hàm đọc thông điệp từ plain.txt
+def read_message(file_path="plain.txt"):
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            message = f.read().strip()
+        if not message:
+            raise ValueError("Empty message in plain.txt")
+        logging.info(f"Read message from {file_path}: {message}")
+        return message
+    except Exception as e:
+        logging.error(f"Failed to read message from {file_path}: {str(e)}")
         raise
 
 # Hàm chuyển chuỗi thành nhị phân và chia thành khối 8x8
@@ -29,7 +42,7 @@ def text_to_binary_blocks(message, block_size=8):
             block_bits = binary[i:i + block_size * block_size]
             block = np.array([int(b) for b in block_bits], dtype=np.uint8).reshape(block_size, block_size)
             binary_blocks.append(block)
-        logging.info(f"Converted message '{message}' to {len(binary_blocks)} binary blocks")
+        logging.info(f"Converted message to {len(binary_blocks)} binary blocks")
         return binary_blocks
     except Exception as e:
         logging.error(f"Failed to convert message to binary blocks: {str(e)}")
@@ -38,7 +51,7 @@ def text_to_binary_blocks(message, block_size=8):
 # Hàm chia ảnh thành các mặt phẳng bit (RGB)
 def get_bit_planes(image):
     try:
-        image_array = np.array(image)
+        image_array = np.array(image, dtype=np.uint8)
         height, width, channels = image_array.shape
         bit_planes = np.zeros((channels, 8, height, width), dtype=np.uint8)
         for channel in range(channels):
@@ -99,10 +112,17 @@ def find_noise_blocks(bit_plane, block_size=8, threshold=0.3):
 # Hàm giấu tin (thay thế toàn bộ khối nhiễu)
 def hide_message(image, binary_blocks, noise_blocks, frame_index, block_size=8, threshold=0.3, start_block_index=0):
     try:
-        image_array = np.array(image)
+        image_array = np.array(image, dtype=np.uint8)
         height, width, channels = image_array.shape
         block_index = start_block_index
         location_map = []
+        
+        # Kiểm tra số lượng khối nhiễu khả dụng
+        total_noise_blocks = sum(len(blocks) for channel in noise_blocks for blocks in channel)
+        if total_noise_blocks < len(binary_blocks) - start_block_index:
+            logging.error(f"Not enough noise blocks ({total_noise_blocks}) for {len(binary_blocks) - start_block_index} binary blocks in frame {frame_index}")
+            raise ValueError("Insufficient noise blocks")
+        logging.info(f"Frame {frame_index} has {total_noise_blocks} noise blocks, need {len(binary_blocks) - start_block_index}")
         
         for channel in range(channels):
             for plane_idx in range(8):
@@ -118,12 +138,21 @@ def hide_message(image, binary_blocks, noise_blocks, frame_index, block_size=8, 
                     # Thay thế khối nhiễu
                     for bi in range(block_size):
                         for bj in range(block_size):
+                            if i + bi >= height or j + bj >= width:
+                                logging.error(f"Out of bounds access at ({i+bi}, {j+bj}) in frame {frame_index}")
+                                raise ValueError("Invalid pixel coordinates")
                             pixel = image_array[i + bi, j + bj, channel]
+                            # Thay vì dùng |= và &=, đặt/xóa bit rõ ràng
                             if block[bi, bj] == 1:
-                                pixel |= (1 << plane_idx)
+                                new_pixel = pixel | (1 << plane_idx)  # Đặt bit
                             else:
-                                pixel &= ~(1 << plane_idx)
-                            image_array[i + bi, j + bj, channel] = pixel
+                                new_pixel = pixel & ~(1 << plane_idx)  # Xóa bit
+                            new_pixel = new_pixel & 0xFF  # Đảm bảo uint8
+                            if new_pixel < 0 or new_pixel > 255:
+                                logging.error(f"Invalid pixel value {new_pixel} at ({i+bi}, {j+bj}, channel={channel}, plane={plane_idx})")
+                                raise ValueError(f"Pixel value {new_pixel} out of bounds")
+                            logging.debug(f"Pixel at ({i+bi}, {j+bj}, channel={channel}, plane={plane_idx}): {pixel} -> {new_pixel}")
+                            image_array[i + bi, j + bj, channel] = new_pixel
                     location_map.append((frame_index, channel, plane_idx, i, j, conjugated))
                     block_index += 1
                 if block_index >= len(binary_blocks):
@@ -156,7 +185,7 @@ try:
     key_K = load_key_K()
     selected_frame_indices = key_K["selected_frame_indices"]
     frame_paths = key_K["frame_paths"]
-    message = "Hello"
+    message = read_message("plain.txt")
     binary_blocks = text_to_binary_blocks(message)
     
     location_map = []
