@@ -57,7 +57,7 @@ def find_noise_blocks(image_path, delta_threshold=0.14):
     
     return sorted(noise_blocks, key=lambda x: (x['channel'] != 'Blue', x['bit_plane']))
 
-def embed_text(noise_blocks_file="noise_blocks_improved.json"):
+def embed_text(noise_blocks_file="code/noise_blocks_improved.json"):
     """Nhúng văn bản từ plain.txt vào các ảnh được chọn."""
     # Đọc số khối nhiễu từ file
     try:
@@ -69,7 +69,7 @@ def embed_text(noise_blocks_file="noise_blocks_improved.json"):
     # Đọc văn bản từ file
     try:
         
-        with open('plain.txt', 'r', encoding='utf-8') as f:
+        with open('./input/plain.txt', 'r', encoding='utf-8') as f:
             text = f.read()
     except FileNotFoundError:
         raise FileNotFoundError("Không tìm thấy file plain.txt")

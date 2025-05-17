@@ -14,13 +14,13 @@ def calculate_histogram_difference(original_img, stego_img):
     return diff
 
 def compare_methods(
-    traditional_noise_file="noise_blocks_traditional.json",
-    improved_noise_file="noise_blocks_improved.json",
-    indices_file="input/frame_key.txt",
-    image_folder="input/frames/",
-    traditional_stego_folder="result/traditional_stego_frames/",
-    improved_stego_folder="result/stego_frames/",
-    text_file="input/plain.txt"
+    traditional_noise_file="code/noise_blocks_traditional.json",
+    improved_noise_file="code/noise_blocks_improved.json",
+    indices_file="./input/frame_key.txt",
+    image_folder="./input/frames/",
+    traditional_stego_folder="./result/traditional_stego_frames/",
+    improved_stego_folder="./result/stego_frames/",
+    text_file="./input/plain.txt"
 ):
     """So sánh phương pháp BPCS truyền thống và cải tiến."""
     try:
@@ -75,8 +75,8 @@ def compare_methods(
     report.append("\nChất lượng ảnh (PSNR, MSE, Histogram Difference):")
     for img_file in valid_images:
         orig_path = os.path.join(image_folder, img_file)
-        trad_stego_path = os.path.join(traditional_stego_folder, f"stego_{img_file}")
-        impr_stego_path = os.path.join(improved_stego_folder, f"stego_{img_file}")
+        trad_stego_path = os.path.join(traditional_stego_folder, f"{img_file}")
+        impr_stego_path = os.path.join(improved_stego_folder, f"{img_file}")
         
         orig_img = cv2.imread(orig_path)
         trad_stego_img = cv2.imread(trad_stego_path)

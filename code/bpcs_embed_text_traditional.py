@@ -71,7 +71,7 @@ def find_noise_blocks(image_path, alpha_threshold=0.3):
     
     return sorted(noise_blocks, key=lambda x: (x['channel'] != 'Blue', x['bit_plane']))
 
-def embed_text(noise_blocks_file="noise_blocks_traditional.json", indices_file="input/frame_key.txt"):
+def embed_text(noise_blocks_file="code/noise_blocks_traditional.json", indices_file="input/frame_key.txt"):
     """Nhúng văn bản từ plain.txt vào các ảnh được chọn (phương pháp truyền thống)."""
     try:
         with open(noise_blocks_file, 'r') as f:
@@ -190,7 +190,7 @@ def embed_text(noise_blocks_file="noise_blocks_traditional.json", indices_file="
         cv2.imwrite(output_path, stego_img)
         print(f"Đã nhúng văn bản vào {filename}, lưu tại {output_path}")
     
-    with open('result/traditional_secret_key.json', 'w') as f:
+    with open('result/secret_key_traditional.json', 'w') as f:
         json.dump({'text_length': len(text.encode('utf-8')), 'blocks': secret_key}, f, indent=4)
 
 if __name__ == "__main__":

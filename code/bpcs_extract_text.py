@@ -38,7 +38,7 @@ def bits_to_text(bits, text_length):
     except UnicodeDecodeError:
         raise ValueError("Không thể giải mã chuỗi bit thành văn bản UTF-8 hợp lệ.")
 
-def extract_text(secret_key_file="result/secret_key.json", stego_folder="result/stego_frames/"):
+def extract_text(secret_key_file="result/secret_key_traditional.json", stego_folder="result/traditional_stego_frames/"):
     """Tách văn bản từ các ảnh chứa tin dựa trên khóa bí mật."""
     # Đọc khóa bí mật
     try:
@@ -113,10 +113,10 @@ def extract_text(secret_key_file="result/secret_key.json", stego_folder="result/
     text = bits_to_text(extracted_bits, text_length)
     
     # Lưu văn bản tách ra
-    with open('extracted_text.txt', 'w', encoding='utf-8') as f:
+    with open('./result/extracted_text.txt', 'w', encoding='utf-8') as f:
         f.write(text)
-    print(f"Văn bản đã được tách và lưu vào extracted_text.txt")
-    
+    print(f"Văn bản đã được tách và lưu vào ./result/extracted_text.txt")
+
     return text
 
 if __name__ == "__main__":

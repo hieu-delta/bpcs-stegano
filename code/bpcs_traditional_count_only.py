@@ -21,7 +21,7 @@ def calculate_traditional_complexity(block):
     alpha = changes / max_changes if max_changes > 0 else 0
     return alpha
 
-def count_noise_blocks(image_folder="input/frames/", output_file="./noise_blocks_traditional.json", alpha_threshold=0.3):
+def count_noise_blocks(image_folder="input/frames/", output_file="noise_blocks_traditional.json", alpha_threshold=0.3):
     """Đếm số khối nhiễu cho tất cả ảnh theo phương pháp BPCS truyền thống."""
     noise_block_counts = {}
     

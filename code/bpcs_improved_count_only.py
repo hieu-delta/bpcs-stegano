@@ -50,7 +50,7 @@ def count_noise_blocks_improved(image_folder, delta_threshold=0.14):
             print(f"Đã xử lý ảnh: {filename}, tìm thấy {noise_block_counts[filename]} khối nhiễu")
     
     # Lưu kết quả vào file JSON
-    with open('./noise_blocks_improved.json', 'w') as f:
+    with open('noise_blocks_improved.json', 'w') as f:
         json.dump(noise_block_counts, f, indent=4)
     
     return noise_block_counts
