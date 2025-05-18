@@ -1,0 +1,41 @@
+So sánh phương pháp BPCS truyền thống và cải tiến
+==================================================
+Văn bản: ./input/plain.txt (324 bytes, 2624 bits)
+Số khối cần thiết: 41
+Danh sách ảnh: frame_1.png, frame_2.png, frame_3.png
+
+Dung lượng nhúng (số khối nhiễu):
+- Truyền thống (α-based): 257390 khối
+- Cải tiến (δ-based): 214503 khối
+
+Chất lượng ảnh (PSNR, MSE, Histogram Difference):
+
+Ảnh frame_1.png:
+- Truyền thống (α-based):
+  PSNR: 83.92 dB
+  MSE: 0.00
+  Histogram Difference: 234.00
+- Cải tiến (δ-based):
+  PSNR: 83.92 dB
+  MSE: 0.00
+  Histogram Difference: 202.00
+
+Ảnh frame_2.png:
+- Truyền thống (α-based):
+  PSNR: 84.17 dB
+  MSE: 0.00
+  Histogram Difference: 200.00
+- Cải tiến (δ-based):
+  PSNR: 84.12 dB
+  MSE: 0.00
+  Histogram Difference: 252.00
+
+Ảnh frame_3.png:
+- Truyền thống (α-based):
+  PSNR: 84.02 dB
+  MSE: 0.00
+  Histogram Difference: 140.00
+- Cải tiến (δ-based):
+  PSNR: 84.02 dB
+  MSE: 0.00
+  Histogram Difference: 140.00

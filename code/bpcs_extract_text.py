@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 import json
+from process import process_files
 
 def conjugate_block(block):
     """Conjugate khối bằng cách XOR với khối cờ vua W_c."""
@@ -38,9 +39,10 @@ def bits_to_text(bits, text_length):
     except UnicodeDecodeError:
         raise ValueError("Không thể giải mã chuỗi bit thành văn bản UTF-8 hợp lệ.")
 
-def extract_text(secret_key_file="result/secret_key_traditional.json", stego_folder="result/traditional_stego_frames/"):
+def extract_text(secret_key_file="./result/secret_key.json", stego_folder="./result/frames/"):
     """Tách văn bản từ các ảnh chứa tin dựa trên khóa bí mật."""
     # Đọc khóa bí mật
+    process_files(source_dir="./result/stego_frames/", dest_dir=stego_folder)
     try:
         with open(secret_key_file, 'r') as f:
             secret_key = json.load(f)
