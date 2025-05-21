@@ -69,7 +69,7 @@ def embed_text(noise_blocks_file="code/noise_blocks_improved.json"):
     # Đọc văn bản từ file
     try:
         
-        with open('./input/plain.txt', 'r', encoding='utf-8') as f:
+        with open('../input/plain.txt', 'r', encoding='utf-8') as f:
             text = f.read()
     except FileNotFoundError:
         raise FileNotFoundError("Không tìm thấy file plain.txt")
@@ -79,13 +79,13 @@ def embed_text(noise_blocks_file="code/noise_blocks_improved.json"):
     bits_needed = len(bits)
     
     # Nhập danh sách số ảnh từ bàn phím
-    with open('input/frame_key.txt', 'r') as f:
+    with open('../input/frame_key.txt', 'r') as f:
         image_numbers = f.read().strip().split(',')
     image_files = [f"frame_{num.strip()}.png" for num in image_numbers]
     
     # Kiểm tra ảnh tồn tại và có trong file khối nhiễu
-    image_folder = "input/frames/"  # Thay bằng đường dẫn thực tế
-    output_folder = "result/stego_frames/"
+    image_folder = "../input/frames/"  # Thay bằng đường dẫn thực tế
+    output_folder = "../result/stego_frames/"
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
     
@@ -191,7 +191,7 @@ def embed_text(noise_blocks_file="code/noise_blocks_improved.json"):
         print(f"Đã nhúng văn bản vào {filename}, lưu tại {output_path}")
     
     # Lưu khóa bí mật
-    with open('result/secret_key.json', 'w') as f:
+    with open('../result/secret_key.json', 'w') as f:
         json.dump({'text_length': len(text.encode('utf-8')), 'blocks': secret_key}, f, indent=4)
 
 if __name__ == "__main__":

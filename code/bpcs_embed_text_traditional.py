@@ -71,16 +71,16 @@ def find_noise_blocks(image_path, alpha_threshold=0.3):
     
     return sorted(noise_blocks, key=lambda x: (x['channel'] != 'Blue', x['bit_plane']))
 
-def embed_text(noise_blocks_file="code/noise_blocks_traditional.json", indices_file="input/frame_key.txt"):
+def embed_text(noise_blocks_file="code/noise_blocks_traditional.json", indices_file="../input/frame_key.txt"):
     """Nhúng văn bản từ plain.txt vào các ảnh được chọn (phương pháp truyền thống)."""
     try:
         with open(noise_blocks_file, 'r') as f:
             noise_block_counts = json.load(f)
     except FileNotFoundError:
         raise FileNotFoundError(f"Không tìm thấy file {noise_blocks_file}")
-    
+
     try:
-        with open('input/plain.txt', 'r', encoding='utf-8') as f:
+        with open('../input/plain.txt', 'r', encoding='utf-8') as f:
             text = f.read()
     except FileNotFoundError:
         raise FileNotFoundError("Không tìm thấy file plain.txt")
@@ -98,8 +98,8 @@ def embed_text(noise_blocks_file="code/noise_blocks_traditional.json", indices_f
     
     image_files = [f"frame_{num.strip()}.png" for num in image_numbers if num.strip()]
     
-    image_folder = "input/frames/"
-    output_folder = "result/traditional_stego_frames/"
+    image_folder = "../input/frames/"
+    output_folder = "../result/traditional_stego_frames/"
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
     
@@ -190,7 +190,7 @@ def embed_text(noise_blocks_file="code/noise_blocks_traditional.json", indices_f
         cv2.imwrite(output_path, stego_img)
         print(f"Đã nhúng văn bản vào {filename}, lưu tại {output_path}")
     
-    with open('result/secret_key_traditional.json', 'w') as f:
+    with open('../result/secret_key_traditional.json', 'w') as f:
         json.dump({'text_length': len(text.encode('utf-8')), 'blocks': secret_key}, f, indent=4)
 
 if __name__ == "__main__":

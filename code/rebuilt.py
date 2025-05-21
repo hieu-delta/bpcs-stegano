@@ -7,10 +7,10 @@ def read_frame_indices(frame_key_path):
     return set(indices)
 
 def reconstruct_video(
-    original_frames_dir="input/frames/",
-    stego_frames_dir="result/stego_frames/",
-    frame_key_path="input/frame_key.txt",
-    output_video_path="result/rebuilt_stego_video.mp4",
+    original_frames_dir="../input/frames/",
+    stego_frames_dir="../result/stego_frames/",
+    frame_key_path="../input/frame_key.txt",
+    output_video_path="../result/rebuilt_stego_video.mp4",
     fps=30
 ):
     # Get all frame filenames sorted by frame number

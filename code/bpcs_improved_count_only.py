@@ -56,5 +56,5 @@ def count_noise_blocks_improved(image_folder, delta_threshold=0.14):
     return noise_block_counts
 
 # Thư mục chứa ảnh
-image_folder = "input/frames/"  # Thay bằng đường dẫn thực tế
+image_folder = "../input/frames/"  # Thay bằng đường dẫn thực tế
 count_noise_blocks_improved(image_folder, delta_threshold=0.14)

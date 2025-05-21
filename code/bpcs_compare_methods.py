@@ -14,13 +14,13 @@ def calculate_histogram_difference(original_img, stego_img):
     return diff
 
 def compare_methods(
-    traditional_noise_file="code/noise_blocks_traditional.json",
-    improved_noise_file="code/noise_blocks_improved.json",
-    indices_file="./input/frame_key.txt",
-    image_folder="./input/frames/",
-    traditional_stego_folder="./result/traditional_stego_frames/",
-    improved_stego_folder="./result/stego_frames/",
-    text_file="./input/plain.txt"
+    traditional_noise_file="cnoise_blocks_traditional.json",
+    improved_noise_file="noise_blocks_improved.json",
+    indices_file="../input/frame_key.txt",
+    image_folder="../input/frames/",
+    traditional_stego_folder="../result/traditional_stego_frames/",
+    improved_stego_folder="../result/stego_frames/",
+    text_file="../input/plain.txt"
 ):
     """So sánh phương pháp BPCS truyền thống và cải tiến."""
     try:
@@ -104,9 +104,9 @@ def compare_methods(
         report.append(f"  MSE: {impr_mse:.2f}")
         report.append(f"  Histogram Difference: {impr_hist_diff:.2f}")
     
-    with open('result/comparison_report.txt', 'w', encoding='utf-8') as f:
+    with open('../result/comparison_report.txt', 'w', encoding='utf-8') as f:
         f.write('\n'.join(report))
-    print("Báo cáo so sánh đã được lưu vào comparison_report.txt")
+    print("Báo cáo so sánh đã được lưu vào ../result/comparison_report.txt")
 
 if __name__ == "__main__":
     compare_methods()
