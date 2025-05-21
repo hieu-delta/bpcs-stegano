@@ -9,7 +9,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Hàm tách video thành các khung hình RGB
-def extract_frames(video_path, output_dir="input/frames"):
+def extract_frames(video_path, output_dir="./input/frames"):
     try:
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -37,7 +37,7 @@ def extract_frames(video_path, output_dir="input/frames"):
 
 # Thực thi
 try:
-    video_path = "input/test.mp4"
+    video_path = "./input/test.mp4"
     frames = extract_frames(video_path)
 except Exception as e:
     logging.error(f"Execution failed: {str(e)}")
